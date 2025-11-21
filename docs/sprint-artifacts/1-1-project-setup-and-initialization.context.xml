@@ -1,0 +1,142 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>1.1</storyId>
+    <title>Project Setup and Initialization</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-21T09:46:27.032Z</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-1-project-setup-and-initialization.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>a properly structured Go project with dependencies and configuration</iWant>
+    <soThat>I can start implementing features immediately</soThat>
+    <tasks>
+      - Initialize Go module (AC: 1)
+        - Run `go mod init steri-connect-go`
+        - Verify `go.mod` file created with correct module name
+      - Create project directory structure (AC: 1)
+        - Create `cmd/server/` directory
+        - Create `internal/` directory with all subdirectories per Architecture
+        - Create `pkg/utils/` directory
+        - Create `web/testui/` directory with subdirectories
+        - Create `config/` directory
+      - Add Go dependencies (AC: 2)
+        - Add SQLite driver: `go get github.com/mattn/go-sqlite3`
+        - Add WebSocket library: `go get github.com/gorilla/websocket`
+        - Add YAML parser: `go get gopkg.in/yaml.v3`
+        - Verify dependencies in `go.mod` and `go.sum` files
+      - Create configuration file structure (AC: 1)
+        - Create `config/config.yaml` with default values
+        - Verify file created in correct location
+      - Create README with setup instructions (AC: 1)
+        - Add project overview
+        - Add prerequisites (Go version)
+        - Add setup instructions
+        - Add basic project structure documentation
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    1. **Given** a new project directory
+       **When** I initialize the Go project
+       **Then** the project has:
+       - `go.mod` file with project name
+       - Standard project structure (cmd/, internal/, pkg/)
+       - Configuration file structure (`config/config.yaml`)
+       - README with setup instructions
+
+    2. **And** dependencies are defined:
+       - SQLite driver (`github.com/mattn/go-sqlite3`)
+       - WebSocket library (`github.com/gorilla/websocket`)
+       - YAML parser (`gopkg.in/yaml.v3`)
+       - HTTP router (standard library or Gin if needed)
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown - Steri-Connect-Melag-Getinge-GO</title>
+        <section>Epic 1: Foundation & Core Infrastructure - Story 1.1</section>
+        <snippet>Project Setup and Initialization story with acceptance criteria, technical notes, and prerequisites. Foundation story that enables all other FRs.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Project Structure</section>
+        <snippet>Complete directory structure definition: cmd/server/, internal/ with subdirectories (api/, adapters/, database/, config/, logging/, testui/), pkg/utils/, web/testui/, config/. Reference for exact directory layout.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Development Environment - Setup Commands</section>
+        <snippet>Go module initialization commands, dependency installation commands, build commands. Reference: `go mod init steri-connect-go`, `go get` commands for dependencies.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Technology Stack Details - Core Technologies</section>
+        <snippet>Go programming language choice, SQLite driver (github.com/mattn/go-sqlite3), WebSocket library (github.com/gorilla/websocket), YAML parser (gopkg.in/yaml.v3). All dependencies required for foundation setup.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Deployment Architecture - Configuration</section>
+        <snippet>YAML configuration file structure, default values for server port (8080), database path, log level, test UI settings. Configuration file location: config/config.yaml.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD-Steri-Connect-Melag-Getinge-GO.md</path>
+        <title>Product Requirements Document</title>
+        <section>1. Zielsetzung der Software</section>
+        <snippet>Foundation requirements: local, portable solution without complex installation (SQLite, portable App). Project setup enables all functional requirements.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <!-- No existing code - greenfield project -->
+    </code>
+    <dependencies>
+      <ecosystem>go</ecosystem>
+      <packages>
+        <package name="github.com/mattn/go-sqlite3" version="latest" />
+        <package name="github.com/gorilla/websocket" version="latest" />
+        <package name="gopkg.in/yaml.v3" version="latest" />
+      </packages>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    - **Project Structure:** Must follow Architecture document Section "Project Structure" exactly - no deviations
+    - **Go Module:** Use standard Go module structure with `go.mod` file
+    - **Configuration:** YAML-based configuration in `config/` directory (not embedded in code)
+    - **Directory Layout:** All directories must be created per Architecture specification
+    - **Dependencies:** Only use dependencies specified in Architecture and PRD
+    - **Testing:** Use Go standard `testing` package, test files alongside source (`*_test.go`)
+    - **Documentation:** README must include setup instructions per AC 1
+  </constraints>
+
+  <interfaces>
+    <!-- No existing interfaces - greenfield project -->
+  </interfaces>
+
+  <tests>
+    <standards>
+      Use Go standard `testing` package. Test files should be named `*_test.go` and placed alongside source files. Unit tests for each component. Integration tests for API endpoints when implemented in later stories.
+    </standards>
+    <locations>
+      Test files will be located alongside source files using `*_test.go` naming convention. For example: `internal/config/config_test.go` would test `internal/config/config.go`.
+    </locations>
+    <ideas>
+      - **AC 1:** Test that `go.mod` file exists and has correct module name after initialization
+      - **AC 1:** Test that all required directories are created with correct structure
+      - **AC 1:** Test that `config/config.yaml` file exists and has default values
+      - **AC 1:** Test that README.md exists and contains required sections (overview, prerequisites, setup instructions, project structure)
+      - **AC 2:** Test that all dependencies are listed in `go.mod` and `go.sum` files exist
+      - **AC 2:** Test that dependencies can be downloaded successfully (`go mod download`)
+      - Integration test: Verify project can be built successfully (`go build ./cmd/server`)
+    </ideas>
+  </tests>
+</story-context>
+

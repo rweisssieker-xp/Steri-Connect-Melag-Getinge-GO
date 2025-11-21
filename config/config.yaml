@@ -1,0 +1,41 @@
+# Steri-Connect-Melag-Getinge-GO Configuration File
+
+# Server Configuration
+server:
+  port: 8080
+  bind_address: "127.0.0.1"  # localhost only (default), use "0.0.0.0" for network access
+
+# Database Configuration
+database:
+  path: "./data/steri-connect.db"
+  # WAL mode enabled by default for better concurrency
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARN, ERROR
+  format: "json"  # json or text
+  output: "stdout"  # stdout or file path
+  max_file_size_mb: 10
+  max_backups: 10
+  compress: true
+
+# Authentication Configuration
+auth:
+  api_key_required: false  # false for localhost, true for network access
+  # api_key: ""  # Set in environment variable or config file
+
+# Device Configuration
+devices:
+  # Melag polling interval (seconds)
+  melag:
+    status_poll_interval: 2
+  # Getinge ICMP ping interval (seconds)
+  getinge:
+    ping_interval: 15
+    ping_timeout: 5
+
+# Test UI Configuration
+test_ui:
+  enabled: true  # Can be disabled in production
+  require_auth: false  # Optional authentication for test UI
+

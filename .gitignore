@@ -58,6 +58,16 @@ go.work.sum
 ._*
 
 # OS - Windows
+.bmad
+.claude
+.cursor
+.gemini
+.github
+.opencode
+.qwen
+.trae
+.vscode
+.windsurf
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
