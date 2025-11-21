@@ -1,3 +1,8 @@
+# All hidden directories (starting with .)
+.*/
+# But keep .git directory
+!.git/
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
