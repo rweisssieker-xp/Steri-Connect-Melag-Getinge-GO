@@ -44,9 +44,13 @@ This will download all required dependencies:
 The application uses a YAML configuration file at `config/config.yaml` with default values:
 
 - **Server Port:** 8080 (default)
+- **Bind Address:** `127.0.0.1` (localhost only by default for security)
+  - Use `0.0.0.0` for network access (requires API key authentication)
 - **Database Path:** `./data/steri-connect.db` (created automatically)
 - **Log Level:** INFO
 - **Test UI:** Enabled (for development)
+
+**Security Note:** By default, the server binds to `127.0.0.1` (localhost only) for security. If you need network access, set `bind_address: "0.0.0.0"` in the config file and **enable API key authentication** (`api_key_required: true`).
 
 You can modify `config/config.yaml` to change these settings.
 

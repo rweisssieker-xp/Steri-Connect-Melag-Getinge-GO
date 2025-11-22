@@ -16,6 +16,24 @@ type Device struct {
 	Updated      time.Time `json:"updated" db:"updated"`
 }
 
+// DeviceStatus represents the health and connection status of a device
+type DeviceStatus struct {
+	DeviceID      int       `json:"device_id"`
+	Connected     bool      `json:"connected"`
+	LastSeen      *time.Time `json:"last_seen,omitempty"`
+	HealthStatus  string    `json:"health_status"` // "healthy", "degraded", "unhealthy"
+	Manufacturer  string    `json:"manufacturer"`
+	IP            string    `json:"ip"`
+	
+	// Melag-specific fields
+	ConnectionType   string    `json:"connection_type,omitempty"` // "MELAnet" or "Direct"
+	LastCycleStatus  string    `json:"last_cycle_status,omitempty"`
+	
+	// Getinge-specific fields
+	ICMPReachable bool       `json:"icmp_reachable,omitempty"`
+	LastPingTime  *time.Time `json:"last_ping_time,omitempty"`
+}
+
 // Cycle represents a sterilization or cleaning cycle
 type Cycle struct {
 	ID               int        `json:"id" db:"id"`

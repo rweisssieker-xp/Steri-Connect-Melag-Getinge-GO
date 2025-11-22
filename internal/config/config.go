@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"strconv"
 	"strings"
@@ -201,6 +202,18 @@ func validate(cfg *Config) error {
 	// Validate bind address
 	if cfg.Server.BindAddress == "" {
 		return fmt.Errorf("bind address cannot be empty")
+	}
+
+	// Validate bind address format (basic validation)
+	if cfg.Server.BindAddress != "0.0.0.0" &&
+		cfg.Server.BindAddress != "127.0.0.1" &&
+		cfg.Server.BindAddress != "localhost" &&
+		!strings.HasPrefix(cfg.Server.BindAddress, "127.") &&
+		!strings.HasPrefix(cfg.Server.BindAddress, "::1") {
+		// Check if it's a valid IP address format
+		if ip := net.ParseIP(cfg.Server.BindAddress); ip == nil {
+			return fmt.Errorf("invalid bind address format: %s (must be valid IP address)", cfg.Server.BindAddress)
+		}
 	}
 
 	// Validate log level

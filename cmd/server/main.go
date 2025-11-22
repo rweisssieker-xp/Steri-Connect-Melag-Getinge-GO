@@ -11,6 +11,7 @@ import (
 	"steri-connect-go/internal/api"
 	"steri-connect-go/internal/config"
 	"steri-connect-go/internal/database"
+	"steri-connect-go/internal/devices"
 	"steri-connect-go/internal/logging"
 )
 
@@ -52,15 +53,35 @@ func main() {
 
 	logger.Info("Database initialized successfully")
 
+	// Initialize device manager
+	deviceManager := devices.NewManager()
+	devices.SetManager(deviceManager) // Set as global manager for API handlers
+	if err := deviceManager.LoadDevices(); err != nil {
+		logger.Warn("Failed to load devices", "error", err)
+		// Continue anyway - devices can be added later
+	}
+	defer deviceManager.Shutdown()
+
+	logger.Info("Device manager initialized")
+
 	// Setup router
 	router := api.SetupRouter()
 
 	// Create and start HTTP server with config
 	server := api.NewServer(cfg.Server.Port, cfg.Server.BindAddress, router)
 
+	// Security warning if binding to network without authentication
+	if cfg.Server.BindAddress == "0.0.0.0" && !cfg.Auth.APIKeyRequired {
+		logger.Warn("Security warning: Server is binding to 0.0.0.0 (all interfaces) without API key authentication",
+			"bind_address", cfg.Server.BindAddress,
+			"api_key_required", cfg.Auth.APIKeyRequired,
+			"recommendation", "Enable API key authentication for network access")
+	}
+
 	logger.Info("Starting HTTP server",
 		"port", cfg.Server.Port,
 		"bind_address", cfg.Server.BindAddress,
+		"api_key_required", cfg.Auth.APIKeyRequired,
 		"api_path", fmt.Sprintf("http://%s:%d/api/", cfg.Server.BindAddress, cfg.Server.Port),
 		"websocket_path", fmt.Sprintf("ws://%s:%d/ws", cfg.Server.BindAddress, cfg.Server.Port))
 

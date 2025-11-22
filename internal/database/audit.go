@@ -12,13 +12,13 @@ import (
 type AuditAction string
 
 const (
-	ActionDeviceAdded   AuditAction = "device_added"
-	ActionDeviceUpdated AuditAction = "device_updated"
-	ActionDeviceDeleted AuditAction = "device_deleted"
-	ActionCycleStarted  AuditAction = "cycle_started"
-	ActionCycleUpdated  AuditAction = "cycle_updated"
-	ActionCycleCompleted AuditAction = "cycle_completed"
-	ActionCycleFailed   AuditAction = "cycle_failed"
+	ActionDeviceAdded     AuditAction = "device_added"
+	ActionDeviceUpdated   AuditAction = "device_updated"
+	ActionDeviceDeleted   AuditAction = "device_deleted"
+	ActionCycleStarted    AuditAction = "cycle_started"
+	ActionCycleUpdated    AuditAction = "cycle_updated"
+	ActionCycleCompleted  AuditAction = "cycle_completed"
+	ActionCycleFailed     AuditAction = "cycle_failed"
 	ActionRDGStatusUpdate AuditAction = "rdg_status_update"
 )
 

@@ -47,35 +47,35 @@ development_status:
   1-4-structured-logging-and-audit-trail: done
   1-5-configuration-management: done
   1-6-api-authentication-optional: done
-  1-7-localhost-only-access-control: backlog
+  1-7-localhost-only-access-control: done
   1-8-role-based-access-control-growth: backlog
   epic-1-retrospective: optional
 
   # Epic 2: Device Management
   epic-2: backlog
-  2-1-add-device-via-api: backlog
-  2-2-update-device-configuration: backlog
-  2-3-delete-device: backlog
-  2-4-device-health-monitoring-and-status-display: backlog
+  2-1-add-device-via-api: done
+  2-2-update-device-configuration: done
+  2-3-delete-device: done
+  2-4-device-health-monitoring-and-status-display: done
   epic-2-retrospective: optional
 
   # Epic 3: Melag Device Integration
   epic-3: backlog
-  3-1-melag-device-connection-via-melanet-box: backlog
-  3-2-start-melag-sterilization-cycle: backlog
-  3-3-real-time-melag-cycle-status-monitoring: backlog
-  3-4-retrieve-melag-cycle-results: backlog
+  3-1-melag-device-connection-via-melanet-box: done
+  3-2-start-melag-sterilization-cycle: done
+  3-3-real-time-melag-cycle-status-monitoring: done
+  3-4-retrieve-melag-cycle-results: done
   epic-3-retrospective: optional
 
   # Epic 4: Getinge Device Monitoring
   epic-4: backlog
-  4-1-getinge-icmp-ping-monitoring: backlog
+  4-1-getinge-icmp-ping-monitoring: done
   4-2-getinge-failure-notification-growth: backlog
   epic-4-retrospective: optional
 
   # Epic 5: Cycle Management and Protocols
   epic-5: backlog
-  5-1-list-all-cycles: backlog
+  5-1-list-all-cycles: done
   5-2-view-cycle-details: backlog
   5-3-export-cycle-protocol-as-pdf: backlog
   5-4-export-cycle-protocol-as-csv: backlog

@@ -41,10 +41,21 @@ func (s *Server) Start() error {
 	}
 
 	logger := logging.Get()
-	logger.Info("HTTP server starting",
-		"address", fmt.Sprintf("http://%s", addr),
-		"api_path", fmt.Sprintf("http://%s/api/", addr),
-		"websocket_path", fmt.Sprintf("ws://%s/ws", addr))
+	
+	// Log security information based on bind address
+	if bindAddr == "0.0.0.0" {
+		logger.Info("HTTP server starting on all network interfaces",
+			"address", fmt.Sprintf("http://%s", addr),
+			"api_path", fmt.Sprintf("http://%s/api/", addr),
+			"websocket_path", fmt.Sprintf("ws://%s/ws", addr),
+			"security_note", "Server accessible from network - ensure API key authentication is enabled")
+	} else {
+		logger.Info("HTTP server starting on localhost only",
+			"address", fmt.Sprintf("http://%s", addr),
+			"api_path", fmt.Sprintf("http://%s/api/", addr),
+			"websocket_path", fmt.Sprintf("ws://%s/ws", addr),
+			"security_note", "Server accessible only from localhost")
+	}
 
 	if err := s.httpServer.Serve(listener); err != nil && err != http.ErrServerClosed {
 		return fmt.Errorf("server failed: %w", err)

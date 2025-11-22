@@ -1,14 +1,12 @@
 package logging
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"sync"
-	"time"
 )
 
 // Logger wraps the structured logger
