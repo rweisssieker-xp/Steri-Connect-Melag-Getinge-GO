@@ -76,29 +76,29 @@ development_status:
   # Epic 5: Cycle Management and Protocols
   epic-5: backlog
   5-1-list-all-cycles: done
-  5-2-view-cycle-details: backlog
-  5-3-export-cycle-protocol-as-pdf: backlog
-  5-4-export-cycle-protocol-as-csv: backlog
-  5-5-export-cycle-protocol-as-json: backlog
-  5-6-view-running-cycles: backlog
+  5-2-view-cycle-details: done
+  5-3-export-cycle-protocol-as-pdf: done
+  5-4-export-cycle-protocol-as-csv: done
+  5-5-export-cycle-protocol-as-json: done
+  5-6-view-running-cycles: done
   5-7-load-to-cycle-traceability-growth: backlog
   epic-5-retrospective: optional
 
   # Epic 6: Test UI for Development and Debugging
   epic-6: backlog
-  6-1-test-ui-device-management-interface: backlog
-  6-2-test-ui-api-endpoint-testing: backlog
-  6-3-test-ui-cycle-control-testing: backlog
-  6-4-test-ui-database-inspection: backlog
-  6-5-test-ui-log-viewing: backlog
-  6-6-test-ui-system-status-display: backlog
-  6-7-test-ui-access-control-and-configuration: backlog
+  6-1-test-ui-device-management-interface: done
+  6-2-test-ui-api-endpoint-testing: done
+  6-3-test-ui-cycle-control-testing: done
+  6-4-test-ui-database-inspection: done
+  6-5-test-ui-log-viewing: done
+  6-6-test-ui-system-status-display: done
+  6-7-test-ui-access-control-and-configuration: done
   epic-6-retrospective: optional
 
   # Epic 7: Health Monitoring and Diagnostics
   epic-7: backlog
-  7-1-health-check-endpoint: backlog
-  7-2-system-metrics-endpoint: backlog
-  7-3-device-diagnostics-endpoint: backlog
+  7-1-health-check-endpoint: done
+  7-2-system-metrics-endpoint: done
+  7-3-device-diagnostics-endpoint: done
   epic-7-retrospective: optional
 

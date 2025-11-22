@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"steri-connect-go/internal/api"
+	"steri-connect-go/internal/api/middleware"
 	"steri-connect-go/internal/config"
 	"steri-connect-go/internal/database"
 	"steri-connect-go/internal/devices"
@@ -39,6 +40,9 @@ func main() {
 	}
 	defer logging.Get().Close()
 
+	// Initialize log buffer for Test UI (keep last 1000 entries)
+	logging.InitBuffer(1000)
+
 	logger := logging.Get()
 	logger.Info("Starting application", "version", "1.0.0")
 
@@ -63,6 +67,9 @@ func main() {
 	defer deviceManager.Shutdown()
 
 	logger.Info("Device manager initialized")
+
+	// Initialize metrics middleware
+	middleware.InitMetrics()
 
 	// Setup router
 	router := api.SetupRouter()

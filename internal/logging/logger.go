@@ -70,12 +70,15 @@ func Init(config Config) error {
 		writer = file
 	}
 
-	var handler slog.Handler
+	var baseHandler slog.Handler
 	if config.Format == "json" {
-		handler = slog.NewJSONHandler(writer, opts)
+		baseHandler = slog.NewJSONHandler(writer, opts)
 	} else {
-		handler = slog.NewTextHandler(writer, opts)
+		baseHandler = slog.NewTextHandler(writer, opts)
 	}
+
+	// Wrap handler to also write to buffer
+	handler := NewBufferedHandler(baseHandler)
 
 	globalLogger = &Logger{
 		Logger: slog.New(handler),

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steri-Connect Test UI</title>
+    <link rel="stylesheet" href="/test-ui/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Steri-Connect Test UI</h1>
+            <p class="subtitle">Development and Debugging Interface</p>
+        </header>
+
+        <main>
+            <!-- Navigation Tabs -->
+            <nav class="tabs">
+                <button class="tab-btn active" onclick="showTab('devices')">Devices</button>
+                <button class="tab-btn" onclick="showTab('cycles')">Cycle Control</button>
+                <button class="tab-btn" onclick="showTab('database')">Database</button>
+                <button class="tab-btn" onclick="showTab('logs')">Logs</button>
+                <button class="tab-btn" onclick="showTab('status')">System Status</button>
+                <button class="tab-btn" onclick="showTab('api')">API Testing</button>
+                <button class="tab-btn" onclick="showTab('websocket')">WebSocket</button>
+            </nav>
+
+            <!-- Devices Tab -->
+            <section id="devices-tab" class="tab-content active">
+            <div class="device-section">
+                <div class="section-header">
+                    <h2>Devices</h2>
+                    <button id="addDeviceBtn" class="btn btn-primary">Add Device</button>
+                </div>
+
+                <div id="deviceList" class="device-list">
+                    <p class="loading">Loading devices...</p>
+                </div>
+            </section>
+
+            <!-- Device Form Modal -->
+            <div id="deviceModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modalTitle">Add Device</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <form id="deviceForm">
+                        <input type="hidden" id="deviceId" name="id">
+                        
+                        <div class="form-group">
+                            <label for="deviceName">Name *</label>
+                            <input type="text" id="deviceName" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deviceIP">IP Address *</label>
+                            <input type="text" id="deviceIP" name="ip" required pattern="^(\d{1,3}\.){3}\d{1,3}$">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deviceManufacturer">Manufacturer *</label>
+                            <select id="deviceManufacturer" name="manufacturer" required>
+                                <option value="">Select...</option>
+                                <option value="Melag">Melag</option>
+                                <option value="Getinge">Getinge</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deviceType">Type *</label>
+                            <select id="deviceType" name="type" required>
+                                <option value="">Select...</option>
+                                <option value="Steri">Steri</option>
+                                <option value="RDG">RDG</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deviceModel">Model</label>
+                            <input type="text" id="deviceModel" name="model">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deviceSerial">Serial Number</label>
+                            <input type="text" id="deviceSerial" name="serial">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deviceLocation">Location</label>
+                            <input type="text" id="deviceLocation" name="location">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </section>
+
+            <!-- Cycle Control Tab -->
+            <section id="cycles-tab" class="tab-content">
+                <div class="cycle-section">
+                    <div class="section-header">
+                        <h2>Cycle Control</h2>
+                    </div>
+
+                    <div class="cycle-control-form">
+                        <div class="form-group">
+                            <label for="cycleDevice">Melag Device *</label>
+                            <select id="cycleDevice" required>
+                                <option value="">Select Melag device...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cycleProgram">Program</label>
+                            <input type="text" id="cycleProgram" placeholder="Optional program name">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cycleTemperature">Temperature (°C)</label>
+                                <input type="number" id="cycleTemperature" step="0.1" placeholder="Optional">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cyclePressure">Pressure (bar)</label>
+                                <input type="number" id="cyclePressure" step="0.1" placeholder="Optional">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cycleDuration">Duration (minutes)</label>
+                                <input type="number" id="cycleDuration" placeholder="Optional">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" onclick="startCycle()" id="startCycleBtn">Start Cycle</button>
+                            <button type="button" class="btn btn-secondary" onclick="refreshCycleStatus()" id="refreshCycleBtn">Refresh Status</button>
+                        </div>
+                    </div>
+
+                    <div id="cycleStatus" class="cycle-status" style="display: none;">
+                        <div class="status-header">
+                            <h3>Cycle Status</h3>
+                            <span id="cycleStatusBadge" class="status-badge"></span>
+                        </div>
+
+                        <div class="cycle-info-grid">
+                            <div class="info-item">
+                                <label>Cycle ID:</label>
+                                <span id="cycleId">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Phase:</label>
+                                <span id="cyclePhase">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Progress:</label>
+                                <span id="cycleProgress">0%</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Temperature:</label>
+                                <span id="cycleTemp">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Pressure:</label>
+                                <span id="cyclePressureDisplay">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Time Remaining:</label>
+                                <span id="cycleTimeRemaining">-</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div id="progressBarFill" class="progress-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span id="progressText">0%</span>
+                            </div>
+                        </div>
+
+                        <div id="cycleResult" class="cycle-result" style="display: none;">
+                            <h4>Cycle Result</h4>
+                            <div id="cycleResultContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Database Inspection Tab -->
+            <section id="database-tab" class="tab-content">
+                <div class="database-section">
+                    <div class="section-header">
+                        <h2>Database Inspection</h2>
+                        <div class="database-actions">
+                            <button class="btn btn-secondary" onclick="loadTableSchema()">View Schema</button>
+                            <button class="btn btn-secondary" onclick="exportTableData('json')">Export JSON</button>
+                            <button class="btn btn-secondary" onclick="exportTableData('csv')">Export CSV</button>
+                        </div>
+                    </div>
+
+                    <div class="database-controls">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dbTable">Table</label>
+                                <select id="dbTable" onchange="loadTableData()">
+                                    <option value="">Select table...</option>
+                                    <option value="devices">devices</option>
+                                    <option value="cycles">cycles</option>
+                                    <option value="rdg_status">rdg_status</option>
+                                    <option value="audit_log">audit_log</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dbDeviceId">Device ID Filter</label>
+                                <input type="number" id="dbDeviceId" placeholder="Optional">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dbStartDate">Start Date</label>
+                                <input type="date" id="dbStartDate">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dbEndDate">End Date</label>
+                                <input type="date" id="dbEndDate">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Actions</label>
+                                <button class="btn btn-primary" onclick="loadTableData()">Load Data</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dbSchema" class="db-schema" style="display: none;">
+                        <h3>Table Schema</h3>
+                        <pre id="dbSchemaContent"></pre>
+                    </div>
+
+                    <div id="dbData" class="db-data">
+                        <div id="dbDataTable" class="data-table"></div>
+                        <div id="dbPagination" class="pagination"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Device Form API<｜tool▁sep｜>new_string
+                </div>
+            </section>
+
+            <!-- Database Inspection Tab -->
+            <section id="database-tab" class="tab-content">
+                <div class="database-section">
+                    <div class="section-header">
+                        <h2>Database Inspection</h2>
+                        <div class="database-actions">
+                            <button class="btn btn-secondary" onclick="exportTableData('json')">Export JSON</button>
+                            <button class="btn btn-secondary" onclick="exportTableData('csv')">Export CSV</button>
+                        </div>
+                    </div>
+
+                    <div class="database-controls">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dbTable">Table</label>
+                                <select id="dbTable" onchange="loadTableData()">
+                                    <option value="">Select table...</option>
+                                    <option value="devices">devices</option>
+                                    <option value="cycles">cycles</option>
+                                    <option value="rdg_status">rdg_status</option>
+                                    <option value="audit_log">audit_log</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dbDeviceId">Device ID Filter</label>
+                                <input type="number" id="dbDeviceId" placeholder="Optional">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dbStartDate">Start Date</label>
+                                <input type="date" id="dbStartDate">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Actions</label>
+                                <button class="btn btn-primary" onclick="loadTableData()">Load Data</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dbData" class="dbData">
+                        <div id="dbDataTable" class="data-table"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Log Viewing Tab -->
+            <section id="logs-tab" class="tab-content">
+                <div class="logs-section">
+                    <div class="section-header">
+                        <h2>Log Viewer</h2>
+                        <div class="logs-actions">
+                            <button class="btn btn-secondary" onclick="exportLogs()">Export</button>
+                            <button class="btn btn-secondary" onclick="clearLogs()">Clear</button>
+                        </div>
+                    </div>
+
+                    <div class="logs-controls">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="logLevelFilter">Level</label>
+                                <select id="logLevelFilter" onchange="loadLogs()">
+                                    <option value="">All Levels</option>
+                                    <option value="DEBUG">DEBUG</option>
+                                    <option value="INFO">INFO</option>
+                                    <option value="WARN">WARN</option>
+                                    <option value="ERROR">ERROR</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group flex-grow">
+                                <label for="logSearch">Search</label>
+                                <input type="text" id="logSearch" placeholder="Search logs..." onkeyup="debounceLoadLogs()">
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="logAutoRefresh" onchange="toggleAutoRefresh()"> Auto-refresh
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Actions</label>
+                                <button class="btn btn-primary" onclick="loadLogs()">Refresh</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="logsDisplay" class="logs-display">
+                        <div id="logsList" class="logs-list">
+                            <p class="loading">Loading logs...</p>
+                        </div>
+                        <div id="logsPagination" class="pagination"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Status Tab -->
+            <section id="status-tab" class="tab-content">
+                <div class="status-section">
+                    <div class="section-header">
+                        <h2>System Status</h2>
+                        <div class="status-actions">
+                            <label>
+                                <input type="checkbox" id="statusAutoRefresh" onchange="toggleStatusAutoRefresh()" checked> Auto-refresh
+                            </label>
+                            <button class="btn btn-primary" onclick="loadSystemStatus()">Refresh</button>
+                        </div>
+                    </div>
+
+                    <div id="systemStatus" class="system-status">
+                        <div class="status-overview">
+                            <div class="status-card status-card-main">
+                                <div class="status-card-header">
+                                    <h3>Overall Status</h3>
+                                    <span id="overallStatusBadge" class="status-badge">Loading...</span>
+                                </div>
+                                <div class="status-card-content">
+                                    <div class="status-item">
+                                        <label>Uptime:</label>
+                                        <span id="systemUptime">-</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <label>Version:</label>
+                                        <span id="systemVersion">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="status-grid">
+                            <div class="status-card">
+                                <div class="status-card-header">
+                                    <h3>Database</h3>
+                                    <span id="dbStatusBadge" class="status-badge">-</span>
+                                </div>
+                                <div class="status-card-content">
+                                    <div class="status-item">
+                                        <label>Status:</label>
+                                        <span id="dbStatus">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="status-card">
+                                <div class="status-card-header">
+                                    <h3>Devices</h3>
+                                </div>
+                                <div class="status-card-content">
+                                    <div class="status-item">
+                                        <label>Total:</label>
+                                        <span id="deviceTotal">-</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <label>Online:</label>
+                                        <span id="deviceOnline" class="status-online">-</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <label>Offline:</label>
+                                        <span id="deviceOffline" class="status-offline">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="status-card">
+                                <div class="status-card-header">
+                                    <h3>WebSocket</h3>
+                                </div>
+                                <div class="status-card-content">
+                                    <div class="status-item">
+                                        <label>Connections:</label>
+                                        <span id="wsConnections">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="status-card">
+                                <div class="status-card-header">
+                                    <h3>Memory</h3>
+                                </div>
+                                <div class="status-card-content">
+                                    <div class="status-item">
+                                        <label>Allocated:</label>
+                                        <span id="memoryAlloc">-</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <label>Total Allocated:</label>
+                                        <span id="memoryTotalAlloc">-</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <label>System:</label>
+                                        <span id="memorySys">-</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <label>GC Runs:</label>
+                                        <span id="memoryGC">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Testing Tab -->
+            <section id="api-tab" class="tab-content">
+                <div class="api-section">
+                    <div class="section-header">
+                        <h2>API Endpoint Testing</h2>
+                    </div>
+
+                    <div class="api-test-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apiMethod">Method</label>
+                                <select id="apiMethod">
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                    <option value="PUT">PUT</option>
+                                    <option value="DELETE">DELETE</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group flex-grow">
+                                <label for="apiEndpoint">Endpoint</label>
+                                <select id="apiEndpoint">
+                                    <option value="/api/health">GET /api/health</option>
+                                    <option value="/api/devices">GET /api/devices</option>
+                                    <option value="/api/devices">POST /api/devices</option>
+                                    <option value="/api/devices/{id}">GET /api/devices/{id}</option>
+                                    <option value="/api/devices/{id}">PUT /api/devices/{id}</option>
+                                    <option value="/api/devices/{id}">DELETE /api/devices/{id}</option>
+                                    <option value="/api/devices/{id}/status">GET /api/devices/{id}/status</option>
+                                    <option value="/api/melag/{id}/start">POST /api/melag/{id}/start</option>
+                                    <option value="/api/melag/{id}/status">GET /api/melag/{id}/status</option>
+                                    <option value="/api/melag/{id}/cycles/{cycle_id}">GET /api/melag/{id}/cycles/{cycle_id}</option>
+                                    <option value="/api/cycles">GET /api/cycles</option>
+                                    <option value="/api/cycles/{id}">GET /api/cycles/{id}</option>
+                                    <option value="/api/cycles/running">GET /api/cycles/running</option>
+                                    <option value="/api/cycles/export/json">GET /api/cycles/export/json</option>
+                                    <option value="/api/cycles/export/csv">GET /api/cycles/export/csv</option>
+                                    <option value="/api/cycles/{id}/export/pdf">GET /api/cycles/{id}/export/pdf</option>
+                                    <option value="custom">Custom...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="customEndpointGroup" style="display: none;">
+                                <label for="customEndpoint">Custom Endpoint</label>
+                                <input type="text" id="customEndpoint" placeholder="/api/...">
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="requestBodyGroup">
+                            <label for="requestBody">Request Body (JSON)</label>
+                            <textarea id="requestBody" rows="8" placeholder='{"key": "value"}'></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" onclick="sendApiRequest()">Send Request</button>
+                            <button type="button" class="btn btn-secondary" onclick="clearApiResponse()">Clear</button>
+                        </div>
+                    </div>
+
+                    <div id="apiResponse" class="api-response" style="display: none;">
+                        <div class="response-header">
+                            <h3>Response</h3>
+                            <span id="responseTime" class="response-time"></span>
+                        </div>
+                        <div class="response-status">
+                            <span id="responseStatus" class="status-badge"></span>
+                        </div>
+                        <div class="response-section">
+                            <h4>Headers</h4>
+                            <pre id="responseHeaders" class="response-content"></pre>
+                        </div>
+                        <div class="response-section">
+                            <h4>Body</h4>
+                            <pre id="responseBody" class="response-content"></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WebSocket Testing Tab -->
+            <section id="websocket-tab" class="tab-content">
+                <div class="websocket-section">
+                    <div class="section-header">
+                        <h2>WebSocket Testing</h2>
+                        <button id="wsConnectBtn" class="btn btn-primary" onclick="toggleWebSocket()">Connect</button>
+                    </div>
+
+                    <div class="websocket-status">
+                        <span id="wsStatus" class="status-badge status-offline">Disconnected</span>
+                    </div>
+
+                    <div class="websocket-controls">
+                        <div class="form-group">
+                            <label for="wsMessage">Send Message (JSON)</label>
+                            <textarea id="wsMessage" rows="4" placeholder='{"type": "test", "data": {}}'></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" onclick="sendWebSocketMessage()" disabled id="wsSendBtn">Send Message</button>
+                            <button type="button" class="btn btn-secondary" onclick="clearWebSocketMessages()">Clear Messages</button>
+                        </div>
+                    </div>
+
+                    <div class="websocket-messages">
+                        <h3>Received Messages</h3>
+                        <div id="wsMessages" class="messages-list">
+                            <p class="empty-state">No messages received yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/test-ui/static/js/app.js"></script>
+</body>
+</html>
+

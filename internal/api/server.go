@@ -43,7 +43,7 @@ func (s *Server) Start() error {
 	logger := logging.Get()
 	
 	// Log security information based on bind address
-	if bindAddr == "0.0.0.0" {
+	if s.bindAddr == "0.0.0.0" {
 		logger.Info("HTTP server starting on all network interfaces",
 			"address", fmt.Sprintf("http://%s", addr),
 			"api_path", fmt.Sprintf("http://%s/api/", addr),

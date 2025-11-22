@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3" // SQLite driver
+	_ "modernc.org/sqlite" // Pure Go SQLite driver (no CGO required)
 	"os"
 	"path/filepath"
 )
@@ -24,7 +24,7 @@ func InitializeDatabase(dbPath string) error {
 
 	// Open database connection
 	var err error
-	db, err = sql.Open("sqlite3", dbPath+"?_foreign_keys=1")
+	db, err = sql.Open("sqlite", dbPath+"?_foreign_keys=1")
 	if err != nil {
 		return err
 	}

@@ -126,6 +126,88 @@ func GetCycle(id int) (*Cycle, error) {
 	return cycle, nil
 }
 
+// GetCycleWithDevice retrieves a cycle by ID with device information
+func GetCycleWithDevice(id int) (*CycleWithDevice, error) {
+	if db == nil {
+		return nil, fmt.Errorf("database not initialized")
+	}
+
+	query := `
+		SELECT c.id, c.device_id, c.program, c.start_ts, c.end_ts, c.result, c.error_code,
+		       c.error_description, c.phase, c.temperature, c.pressure, c.progress_percent,
+		       d.name as device_name, d.ip as device_ip, d.manufacturer
+		FROM cycles c
+		LEFT JOIN devices d ON c.device_id = d.id
+		WHERE c.id = ?
+	`
+
+	var cycle CycleWithDevice
+	var endTS sql.NullTime
+	var result sql.NullString
+	var errorCode sql.NullString
+	var errorDesc sql.NullString
+	var phase sql.NullString
+	var temp sql.NullFloat64
+	var pressure sql.NullFloat64
+	var progress sql.NullInt64
+
+	err := db.QueryRow(query, id).Scan(
+		&cycle.ID,
+		&cycle.DeviceID,
+		&cycle.Program,
+		&cycle.StartTS,
+		&endTS,
+		&result,
+		&errorCode,
+		&errorDesc,
+		&phase,
+		&temp,
+		&pressure,
+		&progress,
+		&cycle.DeviceName,
+		&cycle.DeviceIP,
+		&cycle.Manufacturer,
+	)
+
+	if err == sql.ErrNoRows {
+		return nil, ErrCycleNotFound
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to get cycle: %w", err)
+	}
+
+	// Handle nullable fields
+	if endTS.Valid {
+		cycle.EndTS = &endTS.Time
+	}
+	if result.Valid {
+		cycle.Result = result.String
+	}
+	if errorCode.Valid {
+		cycle.ErrorCode = errorCode.String
+	}
+	if errorDesc.Valid {
+		cycle.ErrorDescription = errorDesc.String
+	}
+	if phase.Valid {
+		cycle.Phase = phase.String
+	}
+	if temp.Valid {
+		tempVal := temp.Float64
+		cycle.Temperature = &tempVal
+	}
+	if pressure.Valid {
+		pressureVal := pressure.Float64
+		cycle.Pressure = &pressureVal
+	}
+	if progress.Valid {
+		progressVal := int(progress.Int64)
+		cycle.ProgressPercent = &progressVal
+	}
+
+	return &cycle, nil
+}
+
 // UpdateCycleStatus updates cycle status and phase information
 func UpdateCycleStatus(id int, phase string, progress *int, temperature *float64, pressure *float64) error {
 	if db == nil {
@@ -472,5 +554,100 @@ func GetAllCycles(options CycleListOptions) ([]CycleWithDevice, int, error) {
 	}
 
 	return cycles, totalCount, nil
+}
+
+// GetRunningCycles retrieves all currently running cycles
+func GetRunningCycles() ([]CycleWithDevice, error) {
+	if db == nil {
+		return nil, fmt.Errorf("database not initialized")
+	}
+
+	query := `
+		SELECT c.id, c.device_id, c.program, c.start_ts, c.end_ts, c.result, c.error_code,
+		       c.error_description, c.phase, c.temperature, c.pressure, c.progress_percent,
+		       d.name as device_name, d.ip as device_ip, d.manufacturer
+		FROM cycles c
+		LEFT JOIN devices d ON c.device_id = d.id
+		WHERE c.end_ts IS NULL
+		  AND c.phase NOT IN ('COMPLETED', 'FAILED')
+		ORDER BY c.start_ts DESC
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query running cycles: %w", err)
+	}
+	defer rows.Close()
+
+	var cycles []CycleWithDevice
+	for rows.Next() {
+		var cycle CycleWithDevice
+		var endTS sql.NullTime
+		var result sql.NullString
+		var errorCode sql.NullString
+		var errorDesc sql.NullString
+		var phase sql.NullString
+		var temp sql.NullFloat64
+		var pressure sql.NullFloat64
+		var progress sql.NullInt64
+
+		err := rows.Scan(
+			&cycle.ID,
+			&cycle.DeviceID,
+			&cycle.Program,
+			&cycle.StartTS,
+			&endTS,
+			&result,
+			&errorCode,
+			&errorDesc,
+			&phase,
+			&temp,
+			&pressure,
+			&progress,
+			&cycle.DeviceName,
+			&cycle.DeviceIP,
+			&cycle.Manufacturer,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan cycle: %w", err)
+		}
+
+		// Handle nullable fields
+		if endTS.Valid {
+			cycle.EndTS = &endTS.Time
+		}
+		if result.Valid {
+			cycle.Result = result.String
+		}
+		if errorCode.Valid {
+			cycle.ErrorCode = errorCode.String
+		}
+		if errorDesc.Valid {
+			cycle.ErrorDescription = errorDesc.String
+		}
+		if phase.Valid {
+			cycle.Phase = phase.String
+		}
+		if temp.Valid {
+			tempVal := temp.Float64
+			cycle.Temperature = &tempVal
+		}
+		if pressure.Valid {
+			pressureVal := pressure.Float64
+			cycle.Pressure = &pressureVal
+		}
+		if progress.Valid {
+			progressVal := int(progress.Int64)
+			cycle.ProgressPercent = &progressVal
+		}
+
+		cycles = append(cycles, cycle)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating cycles: %w", err)
+	}
+
+	return cycles, nil
 }
 

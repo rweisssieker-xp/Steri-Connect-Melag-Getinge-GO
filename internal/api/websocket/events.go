@@ -73,6 +73,13 @@ func GetHub() *Hub {
 	return globalHub
 }
 
+// GetConnectionCount returns the number of active WebSocket connections
+func (h *Hub) GetConnectionCount() int {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	return len(h.clients)
+}
+
 // run starts the hub's message broadcasting loop
 func (h *Hub) run() {
 	for {

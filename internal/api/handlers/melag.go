@@ -12,6 +12,7 @@ import (
 	"steri-connect-go/internal/devices"
 	"steri-connect-go/internal/logging"
 	"steri-connect-go/internal/api/websocket"
+	"steri-connect-go/internal/adapters"
 	"steri-connect-go/internal/adapters/melag"
 )
 
@@ -156,7 +157,7 @@ func StartCycleHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Start cycle on device
-	startParams := melag.CycleStartParams{
+	startParams := adapters.CycleStartParams{
 		Program:     req.Program,
 		Temperature: req.Temperature,
 		Pressure:    req.Pressure,
@@ -478,8 +479,8 @@ type GetCycleResponse struct {
 	ErrorDescription *string   `json:"error_description,omitempty"`
 }
 
-// GetCycleHandler handles GET /api/melag/{id}/cycles/{cycle_id} requests
-func GetCycleHandler(w http.ResponseWriter, r *http.Request) {
+// GetMelagCycleHandler handles GET /api/melag/{id}/cycles/{cycle_id} requests
+func GetMelagCycleHandler(w http.ResponseWriter, r *http.Request) {
 	logger := logging.Get()
 
 	if r.Method != http.MethodGet {
