@@ -35,7 +35,7 @@ go mod download
 ```
 
 This will download all required dependencies:
-- `github.com/mattn/go-sqlite3` - SQLite driver
+- `modernc.org/sqlite` - Pure Go SQLite driver (no CGO required)
 - `github.com/gorilla/websocket` - WebSocket support
 - `gopkg.in/yaml.v3` - YAML configuration parser
 
@@ -60,14 +60,14 @@ You can modify `config/config.yaml` to change these settings.
 # Development build
 go build ./cmd/server
 
-# Production build (strip debug info)
-go build -ldflags="-s -w" -o steri-connect-go ./cmd/server
+# Production build (strip debug info, no CGO)
+CGO_ENABLED=0 go build -ldflags="-s -w" -o steri-connect-go ./cmd/server
 
 # Cross-compile for Windows (from Linux/Mac)
-GOOS=windows GOARCH=amd64 go build -o steri-connect-go.exe ./cmd/server
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o steri-connect-go.exe ./cmd/server
 
 # Cross-compile for Linux (from Windows/Mac)
-GOOS=linux GOARCH=amd64 go build -o steri-connect-go ./cmd/server
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o steri-connect-go ./cmd/server
 ```
 
 ### 5. Run Application
@@ -195,10 +195,29 @@ See `config/config.yaml` for configuration options:
 
 ## Documentation
 
-- **PRD:** `docs/PRD-Steri-Connect-Melag-Getinge-GO.md`
-- **Architecture:** `docs/architecture.md`
-- **Epics & Stories:** `docs/epics.md`
-- **Test Design:** `docs/test-design-system.md`
+### Getting Started
+- **User Guide:** `docs/User-Guide.md` - How to use the application
+- **API Reference:** `docs/API-Reference.md` - Complete API documentation
+- **Troubleshooting Guide:** `docs/Troubleshooting-Guide.md` - Common issues and solutions
+
+### Development
+- **Developer Guide:** `docs/Developer-Guide.md` - Development setup and workflow
+- **Architecture:** `docs/architecture.md` - System architecture and design decisions
+
+### Deployment
+- **Deployment Guide:** `docs/Deployment-Guide.md` - Production deployment instructions
+
+### Planning & Design
+- **PRD:** `docs/PRD-Steri-Connect-Melag-Getinge-GO.md` - Product requirements
+- **Epics & Stories:** `docs/epics.md` - Feature breakdown
+- **Test Design:** `docs/test-design-system.md` - Testing strategy
+
+## Quick Links
+
+- **User Guide:** See `docs/User-Guide.md` for usage instructions
+- **API Documentation:** See `docs/API-Reference.md` for complete API reference
+- **Troubleshooting:** See `docs/Troubleshooting-Guide.md` for common issues
+- **Deployment:** See `docs/Deployment-Guide.md` for production deployment
 
 ## License
 
@@ -206,5 +225,8 @@ See `config/config.yaml` for configuration options:
 
 ## Support
 
-[Support information to be added]
+For support and questions:
+- Review the Troubleshooting Guide: `docs/Troubleshooting-Guide.md`
+- Check the API Reference: `docs/API-Reference.md`
+- Review application logs for detailed error information
 
